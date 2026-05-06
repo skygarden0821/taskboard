@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>TaskBoard</title>
+<title>TaskBoard — Xector1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css"/>
@@ -14,15 +14,11 @@
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--border3:rgba(255,255,255,0.22);
   --text:#f0f0f2;--text2:#9090a0;--text3:#55555f;
   --accent:#c8ff00;--accent-dim:rgba(200,255,0,0.12);--accent-dim2:rgba(200,255,0,0.06);
-  --blue:#4a9eff;--blue-dim:rgba(74,158,255,0.15);
-  --green:#3ecf8e;--green-dim:rgba(62,207,142,0.15);
-  --amber:#f5a623;--amber-dim:rgba(245,166,35,0.15);
-  --coral:#ff6b6b;--coral-dim:rgba(255,107,107,0.15);
-  --purple:#a78bfa;
+  --blue:#4a9eff;--green:#3ecf8e;--amber:#f5a623;--coral:#ff6b6b;--purple:#a78bfa;
+  --coral-dim:rgba(255,107,107,0.15);
   --r:8px;--rl:12px;--rxl:16px;
   --font:'DM Sans','Noto Sans JP',sans-serif;
 }
-html{scroll-behavior:smooth}
 body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
 .layout{display:flex;min-height:100vh}
 .sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0}
@@ -30,8 +26,9 @@ body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--b
 .logo-mark{width:30px;height:30px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center}
 .logo-mark i{font-size:17px;color:#0f0f11}
 .logo-text{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:1px}
 .sidebar-section{padding:16px 20px 6px;font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--text3);text-transform:uppercase}
-.nav-item{display:flex;align-items:center;gap:9px;padding:8px 20px;font-size:13px;cursor:pointer;color:var(--text2);transition:all .15s;position:relative}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 20px;font-size:13px;cursor:pointer;color:var(--text2);transition:all .15s;position:relative;text-decoration:none}
 .nav-item:hover{color:var(--text);background:var(--bg3)}
 .nav-item.active{color:var(--accent);background:var(--accent-dim2)}
 .nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:2px;background:var(--accent);border-radius:0 2px 2px 0}
@@ -55,8 +52,6 @@ body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--b
 .btn-add{display:flex;align-items:center;gap:6px;padding:7px 16px;font-size:12px;font-weight:600;background:var(--accent);color:#0f0f11;border:none;border-radius:var(--r);cursor:pointer;font-family:var(--font);transition:opacity .15s;white-space:nowrap}
 .btn-add:hover{opacity:.88}
 .content{flex:1;overflow:auto;padding:24px}
-
-/* kanban */
 .kanban{display:flex;gap:16px;align-items:flex-start}
 .col{width:240px;flex-shrink:0}
 .col-head{display:flex;align-items:center;gap:8px;padding:0 2px 12px}
@@ -69,7 +64,7 @@ body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--b
 .card:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-2px)}
 .card-title{font-size:13px;font-weight:500;line-height:1.45;margin-bottom:9px}
 .card-group{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;margin-bottom:9px}
-.card-dates{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);margin-bottom:11px}
+.card-dates{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);margin-bottom:11px;flex-wrap:wrap}
 .card-dates i{font-size:12px;color:var(--text3)}
 .overdue{font-size:10px;font-weight:600;color:var(--coral);background:var(--coral-dim);padding:2px 7px;border-radius:20px}
 .days-left{font-size:10px;color:var(--text3)}
@@ -79,8 +74,6 @@ body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--b
 .add-col-btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:9px;font-size:11px;color:var(--text3);cursor:pointer;border:1px dashed var(--border2);border-radius:var(--rl);background:transparent;width:100%;font-family:var(--font);transition:all .15s;margin-top:4px}
 .add-col-btn:hover{border-color:var(--border3);color:var(--text2)}
 .empty-col{text-align:center;padding:20px 10px;color:var(--text3);font-size:11px;border:1px dashed var(--border);border-radius:var(--rl)}
-
-/* gantt */
 .gantt-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);overflow:hidden}
 .gantt-head{display:flex;border-bottom:1px solid var(--border);background:var(--bg2)}
 .gantt-lbl-head{width:210px;flex-shrink:0;padding:10px 16px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;border-right:1px solid var(--border)}
@@ -92,7 +85,7 @@ body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--b
 .gantt-group:last-child{border-bottom:none}
 .gantt-parent-row{display:flex;align-items:center;min-height:40px;cursor:pointer;transition:background .15s}
 .gantt-parent-row:hover{background:rgba(255,255,255,.03)}
-.gantt-parent-lbl{width:210px;flex-shrink:0;padding:0 16px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;border-right:1px solid var(--border);color:var(--text)}
+.gantt-parent-lbl{width:210px;flex-shrink:0;padding:0 16px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;border-right:1px solid var(--border)}
 .gantt-chev{font-size:12px;color:var(--text3);transition:transform .2s;line-height:1;display:inline-block}
 .gantt-chev.open{transform:rotate(90deg)}
 .gantt-bar-area{flex:1;position:relative;height:40px;display:flex;align-items:center}
@@ -107,15 +100,12 @@ body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--b
 .gantt-child-row{display:flex;align-items:center;min-height:34px;border-top:1px solid var(--border);transition:background .15s}
 .gantt-child-row:hover{background:rgba(255,255,255,.025)}
 .gantt-child-lbl{width:210px;flex-shrink:0;padding:0 16px 0 36px;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:7px;border-right:1px solid var(--border)}
-.g-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .gantt-child-bar-area{flex:1;position:relative;height:34px;display:flex;align-items:center}
 .gantt-child-bar{position:absolute;height:16px;border-radius:4px;top:9px;display:flex;align-items:center;padding:0 7px;font-size:10px;font-weight:700;color:#0f0f11;white-space:nowrap;overflow:hidden;cursor:pointer;z-index:2;transition:opacity .15s}
 .gantt-child-bar:hover{opacity:.8}
 .gantt-child-prog{position:absolute;top:0;left:0;height:100%;border-radius:4px;background:rgba(0,0,0,.22)}
 .gantt-child-bar-txt{position:relative;z-index:1}
-.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-
-/* modal */
+.status-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rxl);padding:24px;width:340px;max-width:93vw;animation:mIn .2s ease}
@@ -147,11 +137,12 @@ body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--b
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark"><i class="ti ti-layout-kanban"></i></div>
-    <span class="logo-text">TaskBoard</span>
+    <div><div class="logo-text">TaskBoard</div><div class="logo-sub">Xector1合同会社</div></div>
   </div>
   <div class="sidebar-section">ビュー</div>
   <div class="nav-item active" id="navKanban" onclick="switchView('kanban')"><i class="ti ti-layout-columns"></i>カンバン</div>
   <div class="nav-item" id="navGantt" onclick="switchView('gantt')"><i class="ti ti-timeline"></i>タイムライン</div>
+  <a class="nav-item" href="dashboard.html"><i class="ti ti-chart-bar"></i>ダッシュボード</a>
   <div class="sidebar-section">アクション</div>
   <div class="nav-item" onclick="openAddTask()"><i class="ti ti-plus"></i>タスク追加</div>
   <div class="nav-item" onclick="openAddGroup()"><i class="ti ti-folder-plus"></i>グループ追加</div>
@@ -202,7 +193,7 @@ body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--b
 <div class="modal-overlay" id="overlayGroup" onclick="this.classList.remove('open')">
 <div class="modal" onclick="event.stopPropagation()" style="width:280px">
   <div class="modal-head"><h3>グループ追加</h3><span class="modal-close" onclick="document.getElementById('overlayGroup').classList.remove('open')"><i class="ti ti-x"></i></span></div>
-  <div class="field"><label>グループ名</label><input id="gName" type="text" placeholder="例：マーケティング施策"/></div>
+  <div class="field"><label>グループ名</label><input id="gName" type="text" placeholder="例：Instagram施策"/></div>
   <div class="modal-foot">
     <button onclick="document.getElementById('overlayGroup').classList.remove('open')">キャンセル</button>
     <button class="btn-save" onclick="saveGroup()">追加</button>
@@ -215,7 +206,7 @@ const TODAY=new Date();TODAY.setHours(0,0,0,0);
 const fmt=d=>d.toISOString().slice(0,10);
 const addD=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r};
 const parseD=s=>{const[y,m,d]=s.split('-');return new Date(+y,+m-1,+d)};
-const STORAGE='taskboard_v2';
+const STORAGE='taskboard_v3';
 
 const STATUS={
   todo:{label:'未着手',dot:'#55555f'},
@@ -231,18 +222,33 @@ function load(){try{const d=localStorage.getItem(STORAGE);if(d)return JSON.parse
 function save(){try{localStorage.setItem(STORAGE,JSON.stringify({groups,tasks}));}catch(e){}}
 
 let{groups,tasks}=load()||{
-  groups:[{id:'g1',name:'ProVoice LP改修'},{id:'g2',name:'Xector1 採用'},{id:'g3',name:'Google広告運用'}],
+  groups:[
+    {id:'g1',name:'Xector1 採用・オーディション'},
+    {id:'g2',name:'メンバーポータル'},
+    {id:'g3',name:'Instagram施策'},
+    {id:'g4',name:'MIX・マスタリング事業'},
+  ],
   tasks:[
-    {id:'t1',gid:'g1',name:'ファーストビュー修正',status:'done',start:fmt(addD(TODAY,-10)),end:fmt(addD(TODAY,-5)),pct:100},
-    {id:'t2',gid:'g1',name:'フォーム動作確認',status:'doing',start:fmt(addD(TODAY,-4)),end:fmt(addD(TODAY,3)),pct:60},
-    {id:'t3',gid:'g1',name:'SEOメタ設定',status:'todo',start:fmt(addD(TODAY,4)),end:fmt(addD(TODAY,11)),pct:0},
-    {id:'t4',gid:'g2',name:'X投稿30本作成',status:'doing',start:fmt(addD(TODAY,-6)),end:fmt(addD(TODAY,8)),pct:45},
-    {id:'t5',gid:'g2',name:'オーディション告知DM',status:'todo',start:fmt(addD(TODAY,6)),end:fmt(addD(TODAY,16)),pct:0},
-    {id:'t6',gid:'g2',name:'審査フォーム整備',status:'review',start:fmt(addD(TODAY,-3)),end:fmt(addD(TODAY,4)),pct:80},
-    {id:'t7',gid:'g3',name:'コンバージョン計測確認',status:'done',start:fmt(addD(TODAY,-5)),end:fmt(addD(TODAY,-1)),pct:100},
-    {id:'t8',gid:'g3',name:'クリエイティブABテスト',status:'todo',start:fmt(addD(TODAY,2)),end:fmt(addD(TODAY,15)),pct:0},
+    // Xector1 採用
+    {id:'t1',gid:'g1',name:'X投稿30本シリーズ作成',status:'doing',start:fmt(addD(TODAY,-6)),end:fmt(addD(TODAY,8)),pct:45},
+    {id:'t2',gid:'g1',name:'メンバー体験談ポスト制作',status:'doing',start:fmt(addD(TODAY,-3)),end:fmt(addD(TODAY,5)),pct:60},
+    {id:'t3',gid:'g1',name:'オーディション告知DM送付',status:'todo',start:fmt(addD(TODAY,6)),end:fmt(addD(TODAY,16)),pct:0},
+    {id:'t4',gid:'g1',name:'審査フォーム整備',status:'review',start:fmt(addD(TODAY,-3)),end:fmt(addD(TODAY,4)),pct:80},
+    {id:'t5',gid:'g1',name:'月間430DM送付達成',status:'todo',start:fmt(addD(TODAY,1)),end:fmt(addD(TODAY,30)),pct:0},
+    // メンバーポータル
+    {id:'t6',gid:'g2',name:'ホーム画面週次メッセージ更新',status:'doing',start:fmt(addD(TODAY,-2)),end:fmt(addD(TODAY,3)),pct:70},
+    {id:'t7',gid:'g2',name:'Tipsシステム追加コンテンツ',status:'todo',start:fmt(addD(TODAY,5)),end:fmt(addD(TODAY,14)),pct:0},
+    {id:'t8',gid:'g2',name:'コミュニティフィード投稿スケジュール',status:'review',start:fmt(addD(TODAY,-5)),end:fmt(addD(TODAY,2)),pct:85},
+    // Instagram施策
+    {id:'t9',gid:'g3',name:'Instagram DM戦略立案',status:'todo',start:fmt(addD(TODAY,3)),end:fmt(addD(TODAY,10)),pct:0},
+    {id:'t10',gid:'g3',name:'アカウント最適化',status:'todo',start:fmt(addD(TODAY,7)),end:fmt(addD(TODAY,20)),pct:0},
+    // MIX・マスタリング
+    {id:'t11',gid:'g4',name:'サービスページ公開',status:'done',start:fmt(addD(TODAY,-14)),end:fmt(addD(TODAY,-7)),pct:100},
+    {id:'t12',gid:'g4',name:'料金プラン見直し',status:'todo',start:fmt(addD(TODAY,5)),end:fmt(addD(TODAY,12)),pct:0},
+    {id:'t13',gid:'g4',name:'特商法ページ整備',status:'done',start:fmt(addD(TODAY,-10)),end:fmt(addD(TODAY,-5)),pct:100},
   ]
 };
+
 let nid=300,editId=null,curView='kanban',searchQ='';
 
 const gidx=gid=>groups.findIndex(g=>g.id===gid);
@@ -304,13 +310,10 @@ function renderGantt(){
   const tp=pct(TODAY);
   const gridCols=ticks.map(()=>'<div class="gantt-grid-col"></div>').join('');
   const todayLine=`<div class="gantt-today-line" style="left:${tp}%"></div>`;
-
-  let html=`<div class="gantt-wrap">
-  <div class="gantt-head">
+  let html=`<div class="gantt-wrap"><div class="gantt-head">
     <div class="gantt-lbl-head">タスク</div>
     <div class="gantt-dates-head">${ticks.map(t=>`<div class="gantt-tick">${t.getMonth()+1}/${t.getDate()}</div>`).join('')}<div class="gantt-today-head" style="left:${tp}%"><span class="gantt-today-lbl">TODAY</span></div></div>
   </div>`;
-
   groups.forEach((g,gi)=>{
     const gc=GCOLS[gi%GCOLS.length];
     const gt=ft.filter(t=>t.gid===g.id);
@@ -354,7 +357,6 @@ function toggleG(gid){
   el.style.display=open?'none':'';
   chev.classList.toggle('open',!open);
 }
-
 function switchView(v){
   curView=v;
   document.getElementById('viewKanban').style.display=v==='kanban'?'':'none';
@@ -366,14 +368,11 @@ function switchView(v){
   document.getElementById('viewTitle').textContent=v==='kanban'?'カンバン':'タイムライン';
   v==='gantt'?renderGantt():renderKanban();
 }
-
 function onSearch(){searchQ=document.getElementById('searchInput').value.trim();curView==='kanban'?renderKanban():renderGantt();}
-
 function populateGroups(selGid){
   document.getElementById('fGroup').innerHTML=`<option value="__new__">＋ 新しいグループ</option>`+groups.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
   if(selGid)document.getElementById('fGroup').value=selGid;
 }
-
 function openAddTask(){
   editId=null;
   document.getElementById('modalTitle').textContent='タスク追加';
