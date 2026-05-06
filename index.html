@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>タスクボード</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f5f5f4;--bg3:#efefed;
+  --text:#1a1a1a;--text2:#6b6b6b;--text3:#a0a0a0;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --radius:8px;--radius-lg:12px;
+  --blue:#378ADD;--green:#1D9E75;--amber:#BA7517;--coral:#D85A30;--purple:#7F77DD;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;
+  --text:#e8e8e8;--text2:#a0a0a0;--text3:#666;
+  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;font-size:13px;color:var(--text);background:var(--bg3);min-height:100vh}
+.app{max-width:1100px;margin:0 auto;padding:20px 16px}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.topbar h1{font-size:17px;font-weight:600;flex:1;display:flex;align-items:center;gap:7px}
+.view-btns{display:flex;border:0.5px solid var(--border2);border-radius:var(--radius);overflow:hidden}
+.view-btn{padding:6px 14px;font-size:12px;cursor:pointer;background:transparent;border:none;color:var(--text2);display:flex;align-items:center;gap:5px}
+.view-btn.active{background:var(--bg);color:var(--text);font-weight:500}
+.btn{padding:6px 13px;font-size:12px;cursor:pointer;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);display:flex;align-items:center;gap:5px}
+.btn:hover{background:var(--bg2)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{opacity:.9}
+
+/* kanban */
+.kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px}
+.col{min-width:210px;max-width:230px;flex-shrink:0}
+.col-header{display:flex;align-items:center;gap:6px;padding:0 4px 8px;font-weight:600;font-size:12px}
+.col-count{background:var(--bg3);border-radius:10px;padding:1px 7px;font-size:11px;color:var(--text2)}
+.col-body{display:flex;flex-direction:column;gap:6px;min-height:40px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:10px 12px;cursor:pointer;transition:border-color .15s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-size:12px;font-weight:500;margin-bottom:4px;line-height:1.4}
+.card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.date-badge{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:3px}
+.pct-bar-wrap{height:3px;background:var(--bg3);border-radius:2px;margin-top:7px}
+.pct-bar{height:3px;border-radius:2px;transition:width .3s}
+.add-card-btn{padding:7px 8px;font-size:11px;color:var(--text3);cursor:pointer;border:0.5px dashed var(--border);border-radius:var(--radius);text-align:center;margin-top:2px;background:transparent}
+.add-card-btn:hover{border-color:var(--border2);color:var(--text2)}
+
+/* gantt */
+.gantt-wrap{overflow-x:auto;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px}
+.gantt-inner{min-width:600px}
+.g-header{display:flex;padding-bottom:6px;border-bottom:0.5px solid var(--border);margin-bottom:2px}
+.g-label-col{width:180px;flex-shrink:0;font-size:11px;color:var(--text2);padding:0 8px}
+.g-dates{flex:1;display:flex;position:relative}
+.g-tick{flex:1;font-size:10px;color:var(--text3);text-align:center}
+.g-group{margin-bottom:2px}
+.g-parent-row{display:flex;align-items:center;min-height:30px;cursor:pointer;border-radius:var(--radius)}
+.g-parent-row:hover{background:var(--bg2)}
+.g-label{width:180px;flex-shrink:0;padding:0 8px;display:flex;align-items:center;gap:5px;font-weight:600;font-size:12px}
+.g-chev{font-size:11px;color:var(--text3);transition:transform .15s;line-height:1;display:inline-block}
+.g-chev.open{transform:rotate(90deg)}
+.g-bar-area{flex:1;position:relative;height:22px;display:flex;align-items:center}
+.g-grid{position:absolute;inset:0;display:flex;pointer-events:none}
+.g-grid-line{flex:1;border-right:0.5px solid var(--border);height:100%}
+.g-bar{position:absolute;height:14px;border-radius:3px;top:4px;display:flex;align-items:center;padding:0 6px;font-size:10px;color:#fff;white-space:nowrap;overflow:hidden;cursor:pointer}
+.g-bar-inner{position:absolute;top:0;left:0;height:100%;border-radius:3px;background:rgba(255,255,255,.28)}
+.g-bar-text{position:relative;z-index:1}
+.g-child-row{display:flex;align-items:center;min-height:26px;border-radius:var(--radius)}
+.g-child-row:hover{background:var(--bg2)}
+.g-child-label{width:180px;flex-shrink:0;padding:0 8px 0 22px;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:5px}
+.g-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.g-today{position:absolute;top:-3px;bottom:-3px;width:1.5px;background:#E24B4A;z-index:10;pointer-events:none}
+.g-today-lbl{position:absolute;top:-16px;font-size:9px;color:#E24B4A;transform:translateX(-50%);white-space:nowrap}
+
+/* modal */
+.overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+.overlay-bg.open{display:flex}
+.modal{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.4rem;width:300px;max-width:90vw}
+.modal h3{font-size:14px;font-weight:600;margin-bottom:14px}
+.f{margin-bottom:10px}
+.f label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px}
+.f input,.f select{width:100%;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);font-size:12px}
+.f input[type=range]{padding:4px 0;height:auto}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.mbtns button{padding:6px 14px;font-size:12px;border:0.5px solid var(--border2);border-radius:var(--radius);cursor:pointer;background:var(--bg);color:var(--text)}
+.mbtns button:hover{background:var(--bg2)}
+.mbtns .s{background:var(--blue);border-color:var(--blue);color:#fff}
+.mbtns .d{background:#fcebeb;border-color:#f09595;color:#a32d2d}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <h1><i class="ti ti-layout-kanban"></i>タスクボード</h1>
+    <div class="view-btns">
+      <button class="view-btn active" id="btnKanban" onclick="switchView('kanban')"><i class="ti ti-layout-columns"></i> カンバン</button>
+      <button class="view-btn" id="btnGantt" onclick="switchView('gantt')"><i class="ti ti-timeline"></i> タイムライン</button>
+    </div>
+    <button class="btn primary" onclick="openAddTask()"><i class="ti ti-plus"></i> タスク追加</button>
+  </div>
+
+  <div id="viewKanban"><div class="kanban" id="kanbanBoard"></div></div>
+  <div id="viewGantt" style="display:none"><div class="gantt-wrap"><div class="gantt-inner" id="ganttBoard"></div></div></div>
+</div>
+
+<div class="overlay-bg" id="overlay" onclick="closeOverlay(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="modalTitle">タスク追加</h3>
+    <div class="f"><label>タスク名</label><input id="fName" type="text" placeholder="例：LP改修" /></div>
+    <div class="f"><label>グループ</label><select id="fGroup"></select></div>
+    <div class="f"><label>ステータス</label><select id="fStatus">
+      <option value="todo">未着手</option>
+      <option value="doing">進行中</option>
+      <option value="review">レビュー</option>
+      <option value="done">完了</option>
+    </select></div>
+    <div class="f"><label>開始日</label><input id="fStart" type="date" /></div>
+    <div class="f"><label>終了日</label><input id="fEnd" type="date" /></div>
+    <div class="f"><label>進捗 <span id="pLbl">0%</span></label><input id="fPct" type="range" min="0" max="100" step="5" value="0" oninput="document.getElementById('pLbl').textContent=this.value+'%'" /></div>
+    <div class="mbtns">
+      <button class="d" id="btnDel" style="display:none" onclick="deleteTask()">削除</button>
+      <button onclick="closeOverlay()">キャンセル</button>
+      <button class="s" onclick="saveTask()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const fmt=d=>d.toISOString().slice(0,10);
+const addD=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r};
+const parseD=s=>{const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])};
+
+const STATUS_COLS={todo:{label:'未着手',color:'#888780'},doing:{label:'進行中',color:'#378ADD'},review:{label:'レビュー',color:'#BA7517'},done:{label:'完了',color:'#1D9E75'}};
+const GCOLS=['#378ADD','#1D9E75','#D85A30','#7F77DD','#BA7517'];
+const TAGS=[
+  {bg:'#E6F1FB',text:'#0C447C'},
+  {bg:'#EAF3DE',text:'#27500A'},
+  {bg:'#FAEEDA',text:'#633806'},
+  {bg:'#FAECE7',text:'#712B13'},
+  {bg:'#EEEDFE',text:'#3C3489'},
+];
+
+const STORAGE_KEY='taskboard_v1';
+
+function loadData(){
+  try{const d=localStorage.getItem(STORAGE_KEY);if(d)return JSON.parse(d);}catch(e){}
+  return null;
+}
+function saveData(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({groups,tasks}));}catch(e){}
+}
+
+let {groups,tasks}=loadData()||{
+  groups:[
+    {id:'g1',name:'ProVoice LP改修'},
+    {id:'g2',name:'Xector1 採用'},
+    {id:'g3',name:'Google広告運用'},
+  ],
+  tasks:[
+    {id:'t1',gid:'g1',name:'ファーストビュー修正',status:'done',start:fmt(addD(TODAY,-10)),end:fmt(addD(TODAY,-5)),pct:100},
+    {id:'t2',gid:'g1',name:'フォーム動作確認',status:'doing',start:fmt(addD(TODAY,-4)),end:fmt(addD(TODAY,3)),pct:60},
+    {id:'t3',gid:'g1',name:'SEOメタ設定',status:'todo',start:fmt(addD(TODAY,4)),end:fmt(addD(TODAY,11)),pct:0},
+    {id:'t4',gid:'g2',name:'X投稿30本作成',status:'doing',start:fmt(addD(TODAY,-6)),end:fmt(addD(TODAY,8)),pct:45},
+    {id:'t5',gid:'g2',name:'オーディション告知DM',status:'todo',start:fmt(addD(TODAY,6)),end:fmt(addD(TODAY,16)),pct:0},
+    {id:'t6',gid:'g2',name:'審査フォーム整備',status:'review',start:fmt(addD(TODAY,-3)),end:fmt(addD(TODAY,4)),pct:80},
+    {id:'t7',gid:'g3',name:'コンバージョン計測確認',status:'done',start:fmt(addD(TODAY,-5)),end:fmt(addD(TODAY,-1)),pct:100},
+    {id:'t8',gid:'g3',name:'クリエイティブABテスト',status:'todo',start:fmt(addD(TODAY,2)),end:fmt(addD(TODAY,15)),pct:0},
+  ]
+};
+
+let nid=200;
+let editId=null;
+let curView='kanban';
+
+const gidx=gid=>groups.findIndex(g=>g.id===gid);
+const gcol=gid=>GCOLS[gidx(gid)%GCOLS.length];
+const gtag=gid=>TAGS[gidx(gid)%TAGS.length];
+
+function switchView(v){
+  curView=v;
+  document.getElementById('viewKanban').style.display=v==='kanban'?'':'none';
+  document.getElementById('viewGantt').style.display=v==='gantt'?'':'none';
+  document.getElementById('btnKanban').classList.toggle('active',v==='kanban');
+  document.getElementById('btnGantt').classList.toggle('active',v==='gantt');
+  v==='gantt'?renderGantt():renderKanban();
+}
+
+function renderKanban(){
+  document.getElementById('kanbanBoard').innerHTML=Object.entries(STATUS_COLS).map(([key,col])=>{
+    const ts=tasks.filter(t=>t.status===key);
+    return`<div class="col">
+    <div class="col-header"><span style="color:${col.color}">●</span>${col.label}<span class="col-count">${ts.length}</span></div>
+    <div class="col-body">
+    ${ts.map(t=>{
+      const g=groups.find(g=>g.id===t.gid);
+      const tag=gtag(t.gid);
+      const gc=gcol(t.gid);
+      const overdue=parseD(t.end)<TODAY&&t.status!=='done';
+      return`<div class="card" onclick="openEdit('${t.id}')">
+        <div class="card-title">${t.name}</div>
+        ${g?`<div class="card-meta"><span class="tag" style="background:${tag.bg};color:${tag.text}">${g.name}</span></div>`:''}
+        <div class="card-meta">
+          <span class="date-badge"><i class="ti ti-calendar" style="font-size:11px"></i>${t.start.slice(5).replace('-','/')}→${t.end.slice(5).replace('-','/')}</span>
+          ${overdue?`<span style="font-size:10px;color:#a32d2d">遅延</span>`:''}
+        </div>
+        <div class="pct-bar-wrap"><div class="pct-bar" style="width:${t.pct}%;background:${gc}"></div></div>
+      </div>`;
+    }).join('')}
+    <button class="add-card-btn" onclick="openAddInStatus('${key}')"><i class="ti ti-plus"></i> 追加</button>
+    </div></div>`;
+  }).join('');
+}
+
+function renderGantt(){
+  const all=tasks.map(t=>({s:parseD(t.start),e:parseD(t.end)}));
+  let min=new Date(TODAY),max=addD(TODAY,30);
+  all.forEach(({s,e})=>{if(s<min)min=s;if(e>max)max=e;});
+  min=addD(min,-3);max=addD(max,3);
+  const total=Math.round((max-min)/86400000);
+  const pct=d=>Math.max(0,Math.min(100,Math.round((d-min)/86400000/total*100)));
+  const ticks=[];let cur=new Date(min);
+  while(cur<=max){ticks.push(new Date(cur));cur=addD(cur,Math.ceil(total/7));}
+  const tp=pct(TODAY);
+  const grid=ticks.map(()=>'<div class="g-grid-line"></div>').join('');
+  const todayEl=`<div class="g-today" style="left:${tp}%"><span class="g-today-lbl">今日</span></div>`;
+  let html=`<div class="g-header">
+    <div class="g-label-col">タスク</div>
+    <div class="g-dates">${ticks.map(t=>`<div class="g-tick">${t.getMonth()+1}/${t.getDate()}</div>`).join('')}${todayEl}</div>
+  </div>`;
+  groups.forEach((g,gi)=>{
+    const gc=GCOLS[gi%GCOLS.length];
+    const gt=tasks.filter(t=>t.gid===g.id);
+    if(!gt.length)return;
+    const rs=gt.reduce((a,t)=>t.start<a?t.start:a,gt[0].start);
+    const re=gt.reduce((a,t)=>t.end>a?t.end:a,gt[0].end);
+    const bl=pct(parseD(rs)),bw=Math.max(1,pct(parseD(re))-bl);
+    const avg=Math.round(gt.reduce((a,t)=>a+t.pct,0)/gt.length);
+    html+=`<div class="g-group">
+    <div class="g-parent-row" onclick="toggleG('${g.id}')">
+      <div class="g-label"><span class="g-chev open" id="gc${g.id}">›</span><span style="color:${gc};font-size:11px">●</span>${g.name}</div>
+      <div class="g-bar-area"><div class="g-grid">${grid}${todayEl}</div>
+        <div class="g-bar" style="left:${bl}%;width:${bw}%;background:${gc};opacity:.35">
+          <div class="g-bar-inner" style="width:${avg}%"></div><span class="g-bar-text">${avg}%</span>
+        </div>
+      </div>
+    </div>
+    <div id="gch${g.id}">
+    ${gt.map(t=>{
+      const cl=pct(parseD(t.start)),cw=Math.max(1,pct(parseD(t.end))-cl);
+      return`<div class="g-child-row">
+        <div class="g-child-label"><span class="g-dot" style="background:${gc}"></span>${t.name}</div>
+        <div class="g-bar-area"><div class="g-grid">${grid}${todayEl}</div>
+          <div class="g-bar" style="left:${cl}%;width:${cw}%;background:${gc}" onclick="openEdit('${t.id}')">
+            <div class="g-bar-inner" style="width:${t.pct}%"></div><span class="g-bar-text">${t.pct}%</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+    </div></div>`;
+  });
+  document.getElementById('ganttBoard').innerHTML=html;
+}
+
+function toggleG(gid){
+  const el=document.getElementById('gch'+gid);
+  const chev=document.getElementById('gc'+gid);
+  if(!el)return;
+  const open=el.style.display!=='none';
+  el.style.display=open?'none':'';
+  chev.classList.toggle('open',!open);
+}
+
+function populateGroups(selGid){
+  document.getElementById('fGroup').innerHTML=
+    `<option value="__new__">＋ 新しいグループを作成</option>`+
+    groups.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+  if(selGid)document.getElementById('fGroup').value=selGid;
+}
+
+function openAddTask(){
+  editId=null;
+  document.getElementById('modalTitle').textContent='タスク追加';
+  document.getElementById('fName').value='';
+  document.getElementById('fStatus').value='todo';
+  document.getElementById('fStart').value=fmt(TODAY);
+  document.getElementById('fEnd').value=fmt(addD(TODAY,7));
+  document.getElementById('fPct').value=0;
+  document.getElementById('pLbl').textContent='0%';
+  document.getElementById('btnDel').style.display='none';
+  populateGroups(groups[0]?.id);
+  document.getElementById('overlay').classList.add('open');
+}
+function openAddInStatus(s){openAddTask();document.getElementById('fStatus').value=s;}
+function openEdit(tid){
+  const t=tasks.find(x=>x.id===tid);if(!t)return;
+  editId=tid;
+  document.getElementById('modalTitle').textContent='タスク編集';
+  document.getElementById('fName').value=t.name;
+  document.getElementById('fStatus').value=t.status;
+  document.getElementById('fStart').value=t.start;
+  document.getElementById('fEnd').value=t.end;
+  document.getElementById('fPct').value=t.pct;
+  document.getElementById('pLbl').textContent=t.pct+'%';
+  document.getElementById('btnDel').style.display='inline-block';
+  populateGroups(t.gid);
+  document.getElementById('overlay').classList.add('open');
+}
+function closeOverlay(e){if(!e||e.target===document.getElementById('overlay'))document.getElementById('overlay').classList.remove('open');}
+function saveTask(){
+  const name=document.getElementById('fName').value.trim();
+  const status=document.getElementById('fStatus').value;
+  const start=document.getElementById('fStart').value;
+  const end=document.getElementById('fEnd').value;
+  const pct=+document.getElementById('fPct').value;
+  let gid=document.getElementById('fGroup').value;
+  if(!name||!start||!end)return;
+  if(gid==='__new__'){
+    const gname=prompt('グループ名を入力してください');
+    if(!gname)return;
+    gid='g'+Date.now();
+    groups.push({id:gid,name:gname});
+  }
+  if(editId){
+    const t=tasks.find(x=>x.id===editId);
+    if(t)Object.assign(t,{name,status,start,end,pct,gid});
+  }else{
+    tasks.push({id:'t'+(++nid),gid,name,status,start,end,pct});
+  }
+  saveData();
+  closeOverlay();
+  curView==='kanban'?renderKanban():renderGantt();
+}
+function deleteTask(){
+  if(!editId)return;
+  tasks=tasks.filter(t=>t.id!==editId);
+  saveData();
+  closeOverlay();
+  curView==='kanban'?renderKanban():renderGantt();
+}
+
+renderKanban();
+</script>
+</body>
+</html>
